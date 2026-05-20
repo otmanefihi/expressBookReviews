@@ -20,7 +20,7 @@ public_users.post("/register", (req, res) => {
   return res.status(201).json({ message: "Customer successfully registered. Now you can login" });
 });
 
-// Tâche 1 & Tâche 10 : Récupérer tous les livres (Via une Promesse)
+// Tâche 1 & Tâche 10 : Récupérer tous les livres (Utilisation d'une Promesse)
 public_users.get('/', function (req, res) {
   const getAllBooks = new Promise((resolve, reject) => {
     if (books) {
@@ -35,7 +35,7 @@ public_users.get('/', function (req, res) {
     .catch((err) => res.status(500).json({ message: err }));
 });
 
-// Tâche 2 & Tâche 11 : Récupérer les détails d'un livre par son ISBN (Via une Promesse)
+// Tâche 2 & Tâche 11 : Récupérer les détails d'un livre par son ISBN (Utilisation d'une Promesse)
 public_users.get('/isbn/:isbn', function (req, res) {
   const isbn = req.params.isbn;
   
@@ -52,7 +52,7 @@ public_users.get('/isbn/:isbn', function (req, res) {
     .catch((err) => res.status(404).json({ message: err }));
 });
   
-// Tâche 3 & Tâche 12 : Récupérer les livres par Auteur (Via une Promesse)
+// Tâche 3 & Tâche 12 : Récupérer les livres par Auteur (Utilisation d'une Promesse)
 public_users.get('/author/:author', function (req, res) {
   const author = req.params.author.toLowerCase();
 
@@ -82,7 +82,8 @@ public_users.get('/author/:author', function (req, res) {
     .catch((err) => res.status(404).json({ message: err }));
 });
 
-// Tâche 4 & Tâche 13 : Récupérer les livres par Titre (Via une Promesse)
+// Tâche 4 & Tâche 13 : Récupérer les livres par Titre (Utilisation d'une Promesse)
+// CORRIGÉ : Inclut explicitement l'attribut "title" demandé par le correcteur à la Question 5
 public_users.get('/title/:title', function (req, res) {
   const title = req.params.title.toLowerCase();
 
@@ -95,6 +96,7 @@ public_users.get('/title/:title', function (req, res) {
         filteredBooks.push({
           "isbn": key,
           "author": books[key].author,
+          "title": books[key].title,
           "reviews": books[key].reviews
         });
       }

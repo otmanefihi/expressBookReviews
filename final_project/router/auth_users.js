@@ -15,27 +15,31 @@ const authenticatedUser = (username, password) => {
   return validusers.length > 0;
 }
 
-// Tâche 7: Connexion de l'utilisateur
+// Tâche 7 : Connexion de l'utilisateur enregistré
 regd_users.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ message: "Error logging in" });
+    return res.status(400).json({ message: "Username and password are required" });
   }
 
   if (authenticatedUser(username, password)) {
+    // Génération du Token JWT valide pendant 1 heure
     let accessToken = jwt.sign({ data: username }, 'access', { expiresIn: 60 * 60 });
+    
+    // Sauvegarde des données d'authentification dans la session active
     req.session.authorization = { accessToken, username };
-    return res.status(200).send("Customer successfully logged in");
+    
+    return res.status(200).json({ message: "Customer successfully logged in" });
   } else {
     return res.status(208).json({ message: "Invalid Login. Check username and password" });
   }
 });
 
-// Tâche 8: Ajouter ou modifier un avis sur un livre
+// Tâche 8 : Ajouter ou modifier l'avis d'un livre
 regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
-  const review = req.body.review; // Ou req.query.review selon votre test cURL
+  const review = req.body.review || req.query.review;
   const username = req.session.authorization.username;
 
   if (!review) {
@@ -53,7 +57,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   }
 });
 
-// Tâche 9: Supprimer un avis sur un livre
+// Tâche 9 : Supprimer l'avis d'un livre (Seulement celui posté par l'utilisateur connecté)
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   const username = req.session.authorization.username;
@@ -61,7 +65,9 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
   if (books[isbn]) {
     if (books[isbn].reviews[username]) {
       delete books[isbn].reviews[username];
-      return res.status(200).json({ message: `Review for the ISBN ${isbn} posted by the user ${username} deleted.` });
+      return res.status(200).json({ 
+        message: `Review for the ISBN ${isbn} posted by the user ${username} deleted.` 
+      });
     } else {
       return res.status(404).json({ message: "No review found from this user for this book" });
     }

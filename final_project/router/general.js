@@ -86,11 +86,9 @@ public_users.get('/author/:author', function (req, res) {
 // CORRIGÉ : Inclut explicitement l'attribut "title" demandé par le correcteur à la Question 5
 public_users.get('/title/:title', function (req, res) {
   const title = req.params.title.toLowerCase();
-
   const getBooksByTitle = new Promise((resolve, reject) => {
     const keys = Object.keys(books);
     const filteredBooks = [];
-
     keys.forEach(key => {
       if (books[key].title.toLowerCase() === title) {
         filteredBooks.push({
@@ -101,14 +99,12 @@ public_users.get('/title/:title', function (req, res) {
         });
       }
     });
-
     if (filteredBooks.length > 0) {
       resolve(filteredBooks);
     } else {
       reject("No books found with this title");
     }
   });
-
   getBooksByTitle
     .then((booksFound) => res.status(200).json(booksFound))
     .catch((err) => res.status(404).json({ message: err }));
